@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Any
 
-# from src.services.anonymizer.anonymizer import anonymize_data
-# from src.services.analyzer.analyzer import analyzer
+from src.services.anonymizer.anonymizer import anonymize_data
+from src.services.analyzer.analyzer import analyzer
 from src.services.ner import anonymize_text
 from src.services.interpret.interpret_query import interpret_user_query
 from .routers import router
@@ -33,17 +33,19 @@ app.include_router(router, prefix="/natural_sql_service", tags=["natural_sql_ser
 
 @app.post("/analyze")
 def analyze_endpoint(request: AnalyzeRequest):
-    # results = analyzer(request.text)
-    # anonymized = anonymize_data(request.text, results)
-    # for r in results:
-    #     r.entity_value = request.text[r.start:r.end]
-        
-    # return {
-    #     "analysed_data": results,
-    #     "anonymized_text": anonymized,
-    # }
+    results = analyzer(request.text)
+    anonymized = anonymize_data(request.text, results)
+    result_2 = anonymize_text(anonymized)
 
-    return anonymize_text(request.text)
+    for r in results:
+        r.entity_value = request.text[r.start:r.end]
+
+    return {
+        "analysed_data": results,
+        **result_2,
+    }
+
+    
     
 @app.post("/test_interpret")
 def test_interpret_endpoint(request: AnalyzeRequest):

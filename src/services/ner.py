@@ -52,8 +52,7 @@ def anonymize_text(text: str) -> Tuple[str, List[Dict]]:
         })
 
     return {
-        "anonymized_text": anonymized_text,
-        "entities": entities
+        "anonymized_text": anonymized_text
     }
 
 # Example usage
