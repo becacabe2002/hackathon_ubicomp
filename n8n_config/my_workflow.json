@@ -20,54 +20,14 @@
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "=",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        0,
-        0
-      ],
-      "id": "e3974f7a-7547-4c70-bb6f-5516fb8be52e",
-      "name": "AI Agent"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-3.5-turbo",
-          "mode": "list",
-          "cachedResultName": "gpt-3.5-turbo"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        16,
-        208
-      ],
-      "id": "b4704f7d-2460-4f85-9f80-941492d9cd00",
-      "name": "OpenAI Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "ceDeUr4OYYFqUiVZ",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
+        "respondWith": "allIncomingItems",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        656,
-        384
+        1312,
+        432
       ],
       "id": "b52e52e2-a8c6-43da-bb94-5e995a0d8302",
       "name": "Respond to Webhook"
@@ -108,19 +68,6 @@
     },
     {
       "parameters": {
-        "numberInputs": 3
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        432,
-        592
-      ],
-      "id": "96555b50-4989-4543-a13d-26d02ffa7314",
-      "name": "Merge"
-    },
-    {
-      "parameters": {
         "modelId": {
           "__rl": true,
           "value": "gpt-4.1-mini",
@@ -130,7 +77,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Convert this result into natural language response {{ sample }}"
+              "content": "=Convert this question and result into natural language response:\n* Question: {{ $('analyze').item.json.anonymized_text }}\n* Result: {{ $json.count }}"
             }
           ]
         },
@@ -139,8 +86,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        624,
-        144
+        496,
+        176
       ],
       "id": "840fc48d-5d33-4c98-9c4d-c653f5fe1ff6",
       "name": "Message a model",
@@ -158,13 +105,17 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\"text\": \"{{ $json.body.text }}\"}",
-        "options": {}
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -704,
-        368
+        -688,
+        240
       ],
       "id": "9b4e80cd-0dbf-44cc-b71c-d2324a19826d",
       "name": "analyze"
@@ -176,112 +127,82 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\"text\" : \"{{ $json.anonymized_text }}\"}",
-        "options": {}
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         -496,
-        192
+        368
       ],
       "id": "c6d106a9-4514-4a53-9b22-0edecc0cfced",
       "name": "interpret"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "http://backend:8000//natural-language-query",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "query"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequestTool",
-      "typeVersion": 4.2,
-      "position": [
-        256,
-        208
-      ],
-      "id": "33dc6861-09f8-41a6-a214-ad073b8848f7",
-      "name": "Query Data"
-    },
-    {
-      "parameters": {
-        "url": "/nature/current-search-result",
-        "options": {}
+        "url": "http://backend:8000/natural_sql_service/current-search-result",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        448,
-        0
+        240,
+        176
       ],
       "id": "d2358c5c-a130-4b3b-b727-58e23aabef27",
       "name": "Get Search Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/natural_sql_service/natural-language-query",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $('analyze').item.json.anonymized_text }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "b240df1c-8042-4128-a229-19bd77ddb591",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        416
+      ],
+      "id": "1d1c9a2e-f9df-4106-aca3-eed52c8f0002",
+      "name": "Merge"
     }
   ],
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "content-type": "application/json",
-            "user-agent": "PostmanRuntime/7.46.1",
-            "accept": "*/*",
-            "postman-token": "00231a8c-c28f-4ad9-8606-be70b451fc47",
-            "host": "localhost:5678",
-            "accept-encoding": "gzip, deflate, br",
-            "connection": "keep-alive",
-            "content-length": "61"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "text": "Get number of patients in June this year."
-          },
-          "webhookUrl": "http://localhost:5678/webhook-test/webhook",
-          "executionMode": "test"
-        }
-      }
-    ],
-    "analyze": [
-      {
-        "json": {
-          "analysed_data": [
-            {
-              "entity_type": "DATE_TIME",
-              "start": 26,
-              "end": 40,
-              "score": 0.85,
-              "analysis_explanation": {
-                "recognizer": "SpacyRecognizer",
-                "pattern_name": null,
-                "pattern": null,
-                "original_score": 0.85,
-                "score": 0.85,
-                "textual_explanation": "Identified as DATE_TIME by Spacy's Named Entity Recognition",
-                "score_context_improvement": 0,
-                "supportive_context_word": "",
-                "validation_result": null,
-                "regex_flags": null
-              },
-              "recognition_metadata": {
-                "recognizer_name": "SpacyRecognizer",
-                "recognizer_identifier": "SpacyRecognizer_126784979285968"
-              },
-              "entity_value": "June this year"
-            }
-          ],
-          "anonymized_text": "Get number of patients in <DATE_TIME>."
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -294,56 +215,23 @@
         ]
       ]
     },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Get Search Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Message a model": {
       "main": [
-        []
-      ]
-    },
-    "Merge": {
-      "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -361,7 +249,7 @@
           {
             "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
@@ -377,18 +265,7 @@
           {
             "node": "Merge",
             "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Query Data": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
+            "index": 2
           }
         ]
       ]
@@ -403,17 +280,39 @@
           }
         ]
       ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Get Search Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9a646011-d77a-46c0-8572-e4d3b53de26a",
+  "versionId": "f0d93da0-3de0-46dc-a910-56dd134c2885",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "3e447e2e6d577e0df42a7acf0a1ee67bcf83ccf20dc1776f1292864d92512dca"
   },
-  "id": "S7fc44ColwQ4Ybz1",
+  "id": "123",
   "tags": []
 }
