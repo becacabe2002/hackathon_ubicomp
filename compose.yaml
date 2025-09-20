@@ -10,8 +10,6 @@ services:
     env_file: ".env"
     networks:
       - voz_net
-    volumes:
-      - ./src:/usr/local/app/src
 
   frontend:
     container_name: frontend
@@ -23,8 +21,6 @@ services:
       - voz_net
     depends_on:
       - backend
-    volumes:
-      - ./front-end:/app
     
   n8n:
     container_name: n8n
