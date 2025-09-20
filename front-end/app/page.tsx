@@ -13,7 +13,7 @@ export default function CenteredInputPage() {
   const [result, setResult] = useState<SanitizationResponse | null>(null);
 
   const fetchData = async (data: { text: string }) => {
-    const response = await axios.post("http://localhost:8000/analyze", data);
+    const response = await axios.post("http://localhost:5678/webhook-test/webhook", data);
     setResult(response.data as SanitizationResponse);
     console.log("Response:", response.data as SanitizationResponse);
   };
@@ -66,10 +66,12 @@ export default function CenteredInputPage() {
 
           {result && (
             <div className="mt-4 ">
-              <h2 className="text-lg font-semibold text-center">Query</h2>
+              <h2 className="text-lg font-semibold text-center">User Query</h2>
               <div className="mt-1 text-lg font-medium break-words">{displayQueryText}</div>
-              <h2 className="text-lg font-semibold text-center">Result</h2>
+              <h2 className="text-lg font-semibold text-center">Sanitized Query</h2>
               <div className="mt-1 text-lg font-medium break-words">{result.anonymized_text}</div>
+              <h2 className="text-lg font-semibold text-center">Result</h2>
+              <div className="mt-1 text-lg font-medium break-words">{result?.interpret?.decision == "deny" ? result?.interpret?.reason : result.insight?.message?.content!!}</div>
             </div>
           )}
         </div>

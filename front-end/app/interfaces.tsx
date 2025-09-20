@@ -26,12 +26,33 @@ interface AnalysedData {
   recognition_metadata: RecognitionMetadata;
 }
 
+interface Interpret {
+  itent: string;
+  decision: string;
+  reason: string;
+
+}
+
+interface Insight {
+  index: number;
+  message: {
+    role: string;
+    content: string;
+    refusal: string | null;
+    annotations: any[]; // You can replace `any` with a stricter type if you know the shape
+  };
+  logprobs: any | null; // Same here, refine if you know the structure
+  finish_reason: string;
+}
 interface SanitizationResponse {
   analysed_data: AnalysedData[];
   anonymized_text: string;
+  interpret: Interpret;
+  insight: Insight;
+
 }
 
-export { 
+export {
   type SanitizationResponse,
   type AnalysedData,
 };
