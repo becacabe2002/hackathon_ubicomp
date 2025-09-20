@@ -3,4 +3,4 @@ src/services/anonymizer/__pycache__/anonymizer.cpython-313.pyc
 **/.DS_Store
 **/test.ipynb
 **/*.pyc
-front-end/package-lock.json
+front-end/node_modules
