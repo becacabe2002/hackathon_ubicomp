@@ -30,3 +30,11 @@ We propose building an agentic system to help hospital staff work with patient d
 ## System Flowchart
 
 ![System Flowchart](images/flowchart.jpeg)
+
+## Demo Video
+
+[![Demo Video](https://img.youtube.com/vi/A0iCFATNrj4/0.jpg)](https://www.youtube.com/watch?v=A0iCFATNrj4)
+
+*Click the image above to watch the demo video on YouTube.*
+
+*Note: You may need appropriate permissions to view the video.*
