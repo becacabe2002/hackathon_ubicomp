@@ -12,7 +12,7 @@ const Footer: React.FC = () => (
         bottom: 0,
     }}>
         <span>
-            initial design by VOZ team and copyright &copy; 2025
+            Designed by VOZ team and copyright &copy; 2025
         </span>
     </footer>
 );

@@ -4,7 +4,7 @@ import { SanitizationResponse } from "./interfaces";
 const TableData = (result: SanitizationResponse) => (
     <section className="w-full max-w-[1024px] mt-10  justify-center pb-16">
         <div className="rounded-2xl bg-white shadow-md p-2 overflow-x-auto">
-            <h2 className="text-xl font-semibold text-center mb-4">Findings with decision factors
+            <h2 className="text-xl font-semibold text-center mb-4">Decision Keys Founded
             </h2>
             <div className="w-full overflow-x-auto flex justify-center">
                 <table className="max-w-[1024px] border border-gray-300 text-sm">
@@ -20,11 +20,11 @@ const TableData = (result: SanitizationResponse) => (
                         </tr>
                     </thead>
                     <tbody>
-                        {result.analysed_data.map((data, index) => (
+                        {result.analysed_data && result.analysed_data.map((data, index) => (
                             <tr key={index} className="hover:bg-gray-50">
                                 <td className="border px-3 py-2">{data.entity_type}</td>
                                 <td className="border px-3 py-2">{data.entity_value}</td>
-                                <td className="border px-3 py-2 w-[20px]">{data.score.toFixed(4)}</td>
+                                <td className="border px-3 py-2 w-[20px]">{data.score}</td>
                                 <td className="border px-3 py-2">{data.analysis_explanation?.pattern_name ?? ''}</td>
                                 <td className="border px-3 py-2">{data.analysis_explanation?.recognizer ?? ''}</td>
                                 <td className="border px-3 py-2">{data.analysis_explanation?.textual_explanation ?? ''}</td>
