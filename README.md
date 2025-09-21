@@ -26,3 +26,7 @@ We propose building an agentic system to help hospital staff work with patient d
 
 - Add chat history to the agent for better context and usability.
 - Handle out-of-domain questions to improve robustness and user experience.
+
+## System Flowchart
+
+![System Flowchart](images/flowchart.jpeg)
