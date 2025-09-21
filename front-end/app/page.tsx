@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, FormEvent } from "react";
-import { SanitizationResponse } from "./interfaces";
+import { SanitizationResponse, Insight, AnalysedData, Interpret } from "./interfaces";
 import TableData from "./table";
 import Footer from "./footer";
 import Loading from "./loading";
@@ -10,26 +10,44 @@ export default function CenteredInputPage() {
   const [textInputValue, setTextInputValue] = useState<string>("");
   const [displayQueryText, setDisplayText] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<SanitizationResponse | null>(null);
+  const [insight, setInsight] = useState<Insight | null>(null);
+  const [analyzed_data, setAnalyzedData] = useState<SanitizationResponse | null>(null);
+
+  const [interpret, setInterpret] = useState<Interpret | null>(null);
+
 
   const fetchData = async (data: { text: string }) => {
     const response = await axios.post("http://localhost:5678/webhook-test/webhook", data);
-    setResult(response.data as SanitizationResponse);
-    console.log("Response:", response.data as SanitizationResponse);
-  };
+    const array = response.data as any[];
+    const interpret: Interpret = array[0]?.interpret
+    const analysed_data: SanitizationResponse = array[1]
+    let insight: Insight | undefined;
+    console.log(interpret)
+    console.log(analysed_data)
+    console.log(insight)
+    if (interpret?.decision !== "deny") {
+      insight = array[2]
+    }
 
+
+    setInsight(insight ?? null);
+    setAnalyzedData(analysed_data ?? null);
+    setInterpret(interpret ?? null);
+  };
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     if (textInputValue.trim()) {
       e.preventDefault();
       setDisplayText(textInputValue);
-      setResult(null);
+      setInsight(null);
+      setAnalyzedData(null);
+      setInterpret(null);
       setLoading(true);
       await fetchData({ text: textInputValue });
       setLoading(false);
       setTextInputValue("");
     }
   }
-
+  console.log(interpret)
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
       <section className="absolute top-6">
@@ -64,19 +82,19 @@ export default function CenteredInputPage() {
             </button>}
           </form>
 
-          {result && (
+          {analyzed_data && (
             <div className="mt-4 ">
               <h2 className="text-lg font-semibold text-center">User Query</h2>
               <div className="mt-1 text-lg font-medium break-words">{displayQueryText}</div>
               <h2 className="text-lg font-semibold text-center">Sanitized Query</h2>
-              <div className="mt-1 text-lg font-medium break-words">{result.anonymized_text}</div>
+              <div className="mt-1 text-lg font-medium break-words">{analyzed_data?.anonymized_text}</div>
               <h2 className="text-lg font-semibold text-center">Result</h2>
-              <div className="mt-1 text-lg font-medium break-words">{result?.interpret?.decision == "deny" ? result?.interpret?.reason : result.insight?.message?.content!!}</div>
+              <div className="mt-1 text-lg font-medium break-words">{interpret?.decision == "deny" ? interpret?.reason : insight?.message?.content!!}</div>
             </div>
           )}
         </div>
       </section>
-      {result && <TableData {...result} />}
+      {analyzed_data && <TableData {...analyzed_data} />}
       <Footer />
     </main>
   );

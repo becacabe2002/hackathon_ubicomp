@@ -47,12 +47,12 @@ interface Insight {
 interface SanitizationResponse {
   analysed_data: AnalysedData[];
   anonymized_text: string;
-  interpret: Interpret;
-  insight: Insight;
 
 }
 
 export {
   type SanitizationResponse,
   type AnalysedData,
+  type Insight,
+  type Interpret
 };
