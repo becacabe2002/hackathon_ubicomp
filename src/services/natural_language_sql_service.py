@@ -43,7 +43,8 @@ def perform_sql_query_and_return_result(query: str) -> list[dict]:
 
     return {
         "ai_response": "Success, The result is below",
-        "sql_response_available": True
+        "sql_response_available": True,
+        "sql_query": query
     }
 
 def get_current_search_result() -> list[dict]:
